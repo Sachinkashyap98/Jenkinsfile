@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        ACR_LOGIN_SERVER = 'jenkin.azurecr.io'     // change to your ACR login server
+        ACR_LOGIN_SERVER = 'jenkin.azurecr.io'     // Change to your ACR login server
         IMAGE_NAME = 'nodejs'
         IMAGE_TAG = 'latest'
     }
@@ -11,7 +11,9 @@ pipeline {
         stage('Check Branch') {
             steps {
                 script {
-                    if (env.BRANCH_NAME != 'jenkin') {
+                    def branch = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
+                    echo "Detected branch: ${branch}"
+                    if (branch != 'jenkin') {
                         currentBuild.result = 'ABORTED'
                         error "This pipeline only runs on the 'jenkin' branch"
                     }
@@ -46,7 +48,7 @@ pipeline {
             }
         }
 
-        // Uncomment and fill in if you want to deploy to Azure Container Instance (ACI)
+        // Uncomment and complete this stage if needed
         // stage('Deploy to Azure Container Instance') {
         //     steps {
         //         withCredentials([usernamePassword(credentialsId: 'acr-creds', usernameVariable: 'ACR_USER', passwordVariable: 'ACR_PASS')]) {
